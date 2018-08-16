@@ -1,0 +1,24 @@
+type User {
+	id: ID!
+	username: String!
+	password: String!
+	email: String!
+}
+
+input AuthData {
+	username: String!
+	password: String!
+}
+
+type Query {
+	allUsers: [User]
+}
+
+type Mutation {
+	createUser(email: String!, authProvider: AuthData!) : User
+}
+
+schema {
+	query: Query
+	mutation: Mutation
+}
