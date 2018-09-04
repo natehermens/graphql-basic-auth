@@ -15,7 +15,7 @@ public class Query implements GraphQLQueryResolver {
 		this.userDao = userDao;
 	}
 	
-	@PostFilter("filterObject.username == principal.username || hasRole('ROLE_ADMIN')")
+	//@PostFilter("filterObject.username == principal.username || hasRole('ROLE_ADMIN')")
 	public List<User> allUsers() {
 		return userDao.getAll();
 	}

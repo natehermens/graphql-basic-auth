@@ -5,6 +5,11 @@ type User {
 	email: String!
 }
 
+type JwtAuthenticationResponse {
+	tokenType: String
+	accessToken: String
+}
+
 input AuthData {
 	username: String!
 	password: String!
@@ -16,6 +21,7 @@ type Query {
 
 type Mutation {
 	createUser(email: String!, authProvider: AuthData!) : User
+	signinUser(authProvider: AuthData!) : JwtAuthenticationResponse
 }
 
 schema {

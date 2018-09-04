@@ -1,4 +1,4 @@
-package com.gqlauth.types;
+package com.gqlauth.payload;
 
 public class AuthData {
 

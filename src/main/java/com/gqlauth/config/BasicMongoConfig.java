@@ -9,6 +9,7 @@ import com.mongodb.MongoClient;
 
 @Configuration
 @EnableMongoRepositories(basePackages={"com.gqlauth"})
+@Profile("dev")
 public class BasicMongoConfig extends AbstractMongoConfiguration {
 
 	@Override

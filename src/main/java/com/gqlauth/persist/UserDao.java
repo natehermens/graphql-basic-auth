@@ -21,9 +21,12 @@ public class UserDao {
 					.collect(Collectors.toList());
 	}
 	
-	public User getByUsername(String username) {
-		Optional<User> user = userRepo.findByUsername(username);
-		return user.isPresent() ? user.get() : null;
+	public Optional<User> getByUserId(String id) {
+		return userRepo.findById(id);
+	}
+	
+	public Optional<User> getByUsername(String username) {
+		return userRepo.findByUsername(username);
 	}
 	
 	public User saveUser(User user) {
@@ -34,4 +37,6 @@ public class UserDao {
 		}
 		return added;
 	}
+
+	
 }
