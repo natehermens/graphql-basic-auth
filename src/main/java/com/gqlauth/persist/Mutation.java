@@ -1,7 +1,5 @@
 package com.gqlauth.persist;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,8 +15,6 @@ import com.gqlauth.types.User;
 
 public class Mutation implements GraphQLMutationResolver {
 
-	private static Logger LOGGER = LoggerFactory.getLogger(Mutation.class);
-	
 	private UserDao userDao;
 	
 	@Autowired
@@ -37,7 +33,7 @@ public class Mutation implements GraphQLMutationResolver {
 	
 	public User createUser(String email, AuthData auth) {
 		User newUser = null;
-		LOGGER.info("attempting to create user: "+auth.getUsername()+" with email: "+email);
+
 		if(!userDao.getByUsername(auth.getUsername()).isPresent()) {
 			newUser = userDao.saveUser(new User()
 							.setUsername(auth.getUsername())

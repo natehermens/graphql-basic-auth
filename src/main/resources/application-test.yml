@@ -1,0 +1,8 @@
+app:
+  jwtSecret: JWTSuperSecretKey
+  jwtExpirationInMs: 604800000
+graphql:
+  servlet:
+    mapping: /graphql
+    enabled: true
+    corsEnabled: true

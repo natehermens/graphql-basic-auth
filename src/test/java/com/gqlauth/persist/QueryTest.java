@@ -2,7 +2,6 @@ package com.gqlauth.persist;
 
 import static org.junit.Assert.assertTrue;
 
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -11,22 +10,23 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
+import com.gqlauth.security.JwtTokenProvider;
 import com.gqlauth.security.UserPrincipal;
+import com.gqlauth.testutil.GraphQLTestAuthTemplate;
 import com.gqlauth.types.User;
 import com.graphql.spring.boot.test.GraphQLResponse;
 import com.graphql.spring.boot.test.GraphQLTest;
-import com.graphql.spring.boot.test.GraphQLTestTemplate;
+
 
 @RunWith(SpringRunner.class)
 @GraphQLTest
@@ -34,14 +34,8 @@ import com.graphql.spring.boot.test.GraphQLTestTemplate;
 @DataMongoTest
 public class QueryTest {
 
-    private MockMvc mockMvc;
-	
 	@Autowired
 	private UserDao userDao;
-	
-	private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
-            MediaType.APPLICATION_JSON.getSubtype(),
-            Charset.forName("utf8"));
 	
 	@Autowired 
 	private PasswordEncoder passwordEncoder;
@@ -50,13 +44,13 @@ public class QueryTest {
     protected WebApplicationContext webApplicationContext;
 	
 	@Autowired
-	private GraphQLTestTemplate graphQLTestTemplate;
+	private GraphQLTestAuthTemplate graphQLTemplate;
 
 	@Autowired
 	AuthenticationManager authenticationManager;
 	
-	final static String GRAPH_QL_PATH = "graphql";
-	
+	@Autowired
+	private JwtTokenProvider jwtTokenProvider;
 	
 	@Test
 	public void runQueryTestWithTemplate() throws Exception {
@@ -70,9 +64,10 @@ public class QueryTest {
 
 		UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(user, "password");
 		Authentication auth = authenticationManager.authenticate(authReq);
-		SecurityContextHolder.getContext().setAuthentication(auth);
 		
-		GraphQLResponse response = graphQLTestTemplate.postForResource("graphql/get-all-users.graphql"); 
+		String token = jwtTokenProvider.generateToken(auth);
+		
+		GraphQLResponse response = graphQLTemplate.postForResource(token, "graphql/get-all-users.graphql");
 		
 		assertTrue(response.isOk());
 
@@ -86,5 +81,4 @@ public class QueryTest {
 					.setPassword(passwordEncoder.encode(password))
 					.setEmail(email));
 	}
-	
 }
